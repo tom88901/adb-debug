@@ -48,6 +48,11 @@ class Config:
     COORDS_NEXT_AFTER_PASSWORD = (592, 710)       # Chú thích: Tọa độ của nút "Next" sau khi nhập mật khẩu.
     COORDS_SKIP_OR_NEXT_FINAL = (590, 1198)       # Chú thích: Tọa độ của nút "Next" hoặc "Skip" ở các bước cuối cùng của việc tạo tài khoản.
 
+    # !!! (CHÈN THÊM) TỌA ĐỘ CHO 2 HÀNH ĐỘNG NHẤN MỚI - BẠN HÃY CẬP NHẬT LẠI 2 TỌA ĐỘ NÀY !!!
+    COORDS_TAP_AFTER_FIRST_NAME = (657, 1224)          # Chú thích: Tọa độ nhấn bất kỳ sau khi nhập First name.
+    COORDS_TAP_AFTER_GMAIL = (690, 216)               # Chú thích: Tọa độ nhấn bất kỳ sau khi nhập Gmail.
+
+
     # --- Thông tin người dùng để điền vào các biểu mẫu ---
     INPUT_FIRST_NAME = "Van A"                    # Chú thích: Giá trị Tên sẽ được gõ vào.
     INPUT_SURNAME = "Nguyen"                      # Chú thích: Giá trị Họ sẽ được gõ vào.
@@ -143,7 +148,6 @@ def generate_script():
     commands.append(cmd_tap(cfg.COORDS_ALLOW[0], cfg.COORDS_ALLOW[1])) # Chú thích: Nhấn "ALLOW" để cấp quyền quản trị thiết bị cho Shelter.
     commands.append(cmd_wait(5))                   # Chú thích: Chờ 5 giây để vào màn hình chính của Shelter.
 
-    # --- (ĐOẠN CHÈN THÊM) NHẤN HOME VÀ QUAY LẠI APP ---
     commands.append(cmd_keyevent(3))               # Chú thích: Nhấn phím HOME để quay về màn hình chính.
     commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây.
     commands.append(cmd_tap(cfg.COORDS_ICON_SHELTER_HOME[0], cfg.COORDS_ICON_SHELTER_HOME[1])) # Chú thích: Nhấn vào icon Shelter để mở lại app.
@@ -199,6 +203,9 @@ def generate_script():
     commands.append(cmd_type_text(cfg.INPUT_FIRST_NAME)) # Chú thích: Gõ Tên vào ô.
     commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
 
+    commands.append(cmd_tap(cfg.COORDS_TAP_AFTER_FIRST_NAME[0], cfg.COORDS_TAP_AFTER_FIRST_NAME[1])) # Chú thích: Nhấn vào vị trí bất kỳ sau khi nhập First name.
+    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+
     commands.append(cmd_tap(cfg.COORDS_SURNAME_INPUT[0], cfg.COORDS_SURNAME_INPUT[1])) # Chú thích: Nhấn vào ô nhập "Surname".
     commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
 
@@ -240,6 +247,9 @@ def generate_script():
     commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_type_text(cfg.INPUT_GMAIL_USERNAME)) # Chú thích: Gõ tên người dùng Gmail mong muốn.
+    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+
+    commands.append(cmd_tap(cfg.COORDS_TAP_AFTER_GMAIL[0], cfg.COORDS_TAP_AFTER_GMAIL[1])) # Chú thích: Nhấn vào vị trí bất kỳ sau khi nhập Gmail.
     commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_tap(cfg.COORDS_NEXT_AFTER_GMAIL[0], cfg.COORDS_NEXT_AFTER_GMAIL[1])) # Chú thích: Nhấn "Next" sau khi nhập Gmail.
