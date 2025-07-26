@@ -13,6 +13,7 @@ class Config:
     COORDS_CHROME_ACCEPT = (356, 1181)           # Chú thích: Tọa độ (X, Y) của nút "Accept & continue" trên màn hình Welcome của Chrome.
     COORDS_CHROME_SYNC_NO = (101, 1200)           # Chú thích: Tọa độ (X, Y) của nút "No, thanks" trên màn hình "Turn on sync?".
     COORDS_CHROME_NOTIF_CONTINUE = (337, 1051)    # Chú thích: Tọa độ (X, Y) của nút "Continue" trên màn hình "Chrome notifications".
+    COORDS_CHROME_DOWNLOAD_ANYWAY = (533, 784)   # Chú thích: Tọa độ (X, Y) của nút "Download anyway" khi Chrome hiện cảnh báo. 
 
     # --- Tọa độ cho các bước còn lại của kịch bản ---
     COORDS_ICON_SHELTER_HOME = (274, 294)         # Chú thích: Tọa độ của biểu tượng ứng dụng Shelter trên màn hình chính.
@@ -110,10 +111,11 @@ def generate_script():
     commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây để màn hình tiếp theo ("Chrome notifications") xuất hiện.
 
     commands.append(cmd_tap(cfg.COORDS_CHROME_NOTIF_CONTINUE[0], cfg.COORDS_CHROME_NOTIF_CONTINUE[1])) # Chú thích: Nhấn vào tọa độ của nút "Continue" để xử lý màn hình thông báo.
-    commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây để trang web tải file được hiển thị đầy đủ.
+    commands.append(cmd_wait(5))                   # Chú thích: Chờ 5 giây để trang web tải file và hộp thoại cảnh báo có thể xuất hiện.
 
-    # --- Sau khi đã qua các màn hình cài đặt, tiến hành tải file ---
-    commands.append(cmd_keyevent(66))              # Chú thích: Nhấn phím ENTER để xác nhận tải file (thường hộp thoại tải xuống sẽ hiện ra sau khi truy cập link).
+    # --- (THAY ĐỔI) Sau khi đã qua các màn hình cài đặt, tiến hành tải file ---
+    # Nhấn vào nút "Download anyway" trên hộp thoại cảnh báo thay vì nhấn ENTER
+    commands.append(cmd_tap(cfg.COORDS_CHROME_DOWNLOAD_ANYWAY[0], cfg.COORDS_CHROME_DOWNLOAD_ANYWAY[1])) # Chú thích: Nhấn vào nút "Download anyway" để xác nhận tải file.
     commands.append(cmd_wait(20))                  # Chú thích: Chờ 20 giây để đảm bảo tệp APK có đủ thời gian để tải về hoàn tất.
 
     commands.append(cmd_install_apk(cfg.APK_PATH_IN_VM)) # Chú thích: Cài đặt tệp APK vừa tải về từ thư mục Download.
