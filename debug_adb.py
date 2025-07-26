@@ -13,7 +13,7 @@ class Config:
     COORDS_CHROME_ACCEPT = (356, 1181)           # Chú thích: Tọa độ (X, Y) của nút "Accept & continue" trên màn hình Welcome của Chrome.
     COORDS_CHROME_SYNC_NO = (101, 1200)           # Chú thích: Tọa độ (X, Y) của nút "No, thanks" trên màn hình "Turn on sync?".
     COORDS_CHROME_NOTIF_CONTINUE = (337, 1051)    # Chú thích: Tọa độ (X, Y) của nút "Continue" trên màn hình "Chrome notifications".
-    COORDS_CHROME_DOWNLOAD_ANYWAY = (533, 784)   # Chú thích: Tọa độ (X, Y) của nút "Download anyway" khi Chrome hiện cảnh báo. 
+    COORDS_CHROME_DOWNLOAD_ANYWAY = (533, 784)   # Chú thích: Tọa độ (X, Y) của nút "Download anyway" khi Chrome hiện cảnh báo.
 
     # --- Tọa độ cho các bước còn lại của kịch bản ---
     COORDS_ICON_SHELTER_HOME = (274, 294)         # Chú thích: Tọa độ của biểu tượng ứng dụng Shelter trên màn hình chính.
@@ -116,10 +116,10 @@ def generate_script():
     # --- (THAY ĐỔI) Sau khi đã qua các màn hình cài đặt, tiến hành tải file ---
     # Nhấn vào nút "Download anyway" trên hộp thoại cảnh báo thay vì nhấn ENTER
     commands.append(cmd_tap(cfg.COORDS_CHROME_DOWNLOAD_ANYWAY[0], cfg.COORDS_CHROME_DOWNLOAD_ANYWAY[1])) # Chú thích: Nhấn vào nút "Download anyway" để xác nhận tải file.
-    commands.append(cmd_wait(20))                  # Chú thích: Chờ 20 giây để đảm bảo tệp APK có đủ thời gian để tải về hoàn tất.
+    commands.append(cmd_wait(10))                  # Chú thích: Chờ 10 giây để đảm bảo tệp APK có đủ thời gian để tải về hoàn tất.
 
     commands.append(cmd_install_apk(cfg.APK_PATH_IN_VM)) # Chú thích: Cài đặt tệp APK vừa tải về từ thư mục Download.
-    commands.append(cmd_wait(15))                  # Chú thích: Chờ 15 giây để quá trình cài đặt ứng dụng Shelter hoàn tất.
+    commands.append(cmd_wait(10))                  # Chú thích: Chờ 10 giây để quá trình cài đặt ứng dụng Shelter hoàn tất.
 
     commands.append(cmd_keyevent(3))               # Chú thích: Nhấn phím HOME để quay về màn hình chính của thiết bị.
     commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây để màn hình chính ổn định.
@@ -142,6 +142,12 @@ def generate_script():
 
     commands.append(cmd_tap(cfg.COORDS_ALLOW[0], cfg.COORDS_ALLOW[1])) # Chú thích: Nhấn "ALLOW" để cấp quyền quản trị thiết bị cho Shelter.
     commands.append(cmd_wait(5))                   # Chú thích: Chờ 5 giây để vào màn hình chính của Shelter.
+
+    # --- (ĐOẠN CHÈN THÊM) NHẤN HOME VÀ QUAY LẠI APP ---
+    commands.append(cmd_keyevent(3))               # Chú thích: Nhấn phím HOME để quay về màn hình chính.
+    commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây.
+    commands.append(cmd_tap(cfg.COORDS_ICON_SHELTER_HOME[0], cfg.COORDS_ICON_SHELTER_HOME[1])) # Chú thích: Nhấn vào icon Shelter để mở lại app.
+    commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây để app mở lại.
 
     # --- BƯỚC 10-17: CLONE ỨNG DỤNG ---
     commands.append(cmd_tap(cfg.COORDS_3_DOTS_MENU[0], cfg.COORDS_3_DOTS_MENU[1])) # Chú thích: Nhấn vào menu 3 chấm ở góc trên bên phải.
