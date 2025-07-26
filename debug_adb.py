@@ -8,9 +8,10 @@ class Config:
     APK_DOWNLOAD_URL = "https://raw.githubusercontent.com/tom88901/apk_debug/main/Shelter.apk" # Chú thích: Đường link URL trực tiếp để tải về tệp Shelter.apk.
     APK_PATH_IN_VM = "/sdcard/Download/Shelter.apk" # Chú thích: Đường dẫn lưu tệp APK sau khi tải về trên máy ảo, thường là trong thư mục Download.
 
-    # !!! THAY ĐỔI QUAN TRỌNG: Tọa độ tuyệt đối cho 3 nút cài đặt của Chrome
-    # BẠN CẦN LẤY VÀ CẬP NHẬT 3 TỌA ĐỘ NÀY BẰNG CÔNG CỤ "VỊ TRÍ CON TRỎ"
-    COORDS_CHROME_ACCEPT = (356, 1181)           # Chú thích: Tọa độ (X, Y) của nút "Accept & continue" trên màn hình Welcome của Chrome.
+    # !!! THAY ĐỔI QUAN TRỌNG: Tọa độ cho các màn hình chào mừng của Chrome
+    # BẠN CẦN LẤY VÀ CẬP NHẬT CÁC TỌA ĐỘ NÀY BẰNG CÔNG CỤ "VỊ TRÍ CON TRỎ"
+    COORDS_CHROME_ACCEPT = (356, 1181)           # Chú thích: Tọa độ (X, Y) của nút "Accept & continue" (Trường hợp 1).
+    COORDS_CHROME_USE_WITHOUT_ACCOUNT = (350, 1064) # Chú thích: Tọa độ (X, Y) của nút "Use without an account" (Trường hợp 2).
     COORDS_CHROME_SYNC_NO = (101, 1200)           # Chú thích: Tọa độ (X, Y) của nút "No, thanks" trên màn hình "Turn on sync?".
     COORDS_CHROME_NOTIF_CONTINUE = (337, 1051)    # Chú thích: Tọa độ (X, Y) của nút "Continue" trên màn hình "Chrome notifications".
     COORDS_CHROME_DOWNLOAD_ANYWAY = (533, 784)   # Chú thích: Tọa độ (X, Y) của nút "Download anyway" khi Chrome hiện cảnh báo.
@@ -42,8 +43,7 @@ class Config:
     COORDS_GENDER_MALE_OR_FEMALE = (202, 310)     # Chú thích: Tọa độ của một lựa chọn giới tính (ví dụ: Male/Female).
     COORDS_NEXT_AFTER_DOB = (592, 1210)           # Chú thích: Tọa độ của nút "Next" sau khi nhập xong ngày tháng năm sinh.
     COORDS_CREATE_OWN_GMAIL = (162, 690)          # Chú thích: Tọa độ của tùy chọn "Create your own Gmail address".
-    COORDS_CUSTOM_GMAIL_INPUT = (126, 840)        # Chú thích: Tọa độ của ô để nhập địa chỉ Gmail tùy chỉnh.
-    COORDS_NEXT_AFTER_GMAIL = (594, 708)          # Chú thích: Tọa độ của nút "Next" sau khi nhập Gmail.
+    COORDS_NEXT_AFTER_GMAIL = (592, 1210)          # Chú thích: Tọa độ của nút "Next" sau khi nhập Gmail.
     COORDS_PASSWORD_INPUT = (106, 540)            # Chú thích: Tọa độ của ô nhập "Password" (Mật khẩu).
     COORDS_NEXT_AFTER_PASSWORD = (592, 710)       # Chú thích: Tọa độ của nút "Next" sau khi nhập mật khẩu.
     COORDS_SKIP_OR_NEXT_FINAL = (590, 1198)       # Chú thích: Tọa độ của nút "Next" hoặc "Skip" ở các bước cuối cùng của việc tạo tài khoản.
@@ -108,18 +108,29 @@ def generate_script():
     commands.append(cmd_start_chrome(cfg.APK_DOWNLOAD_URL)) # Chú thích: Mở ứng dụng Chrome với đường link tải tệp APK.
     commands.append(cmd_wait(5))                   # Chú thích: Chờ 5 giây để Chrome có thời gian khởi động và hiển thị màn hình đầu tiên.
 
-    # --- Chuỗi lệnh xử lý các màn hình cài đặt của Chrome theo thứ tự ---
-    commands.append(cmd_tap(cfg.COORDS_CHROME_ACCEPT[0], cfg.COORDS_CHROME_ACCEPT[1])) # Chú thích: Nhấn vào tọa độ của nút "Accept & continue" trên màn hình Welcome.
-    commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây để màn hình tiếp theo ("Turn on sync?") xuất hiện.
+    # --- (THAY ĐỔI LOGIC) Xử lý 2 trường hợp màn hình chào mừng của Chrome ---
+    # Tạo lệnh điều kiện: dump UI, kiểm tra xem có chữ "Accept & continue" không, nếu có thì nhấn vào tọa độ 1, không thì nhấn tọa độ 2.
+    # Lưu ý: grep tìm "Accept &amp; continue" vì ký tự "&" được mã hóa thành "&amp;" trong file XML.
+    conditional_tap_command = (
+        'uiautomator dump && '
+        'if (grep -q "Accept &amp; continue" /sdcard/window_dump.xml); '
+        f'then input tap {cfg.COORDS_CHROME_ACCEPT[0]} {cfg.COORDS_CHROME_ACCEPT[1]}; '
+        f'else input tap {cfg.COORDS_CHROME_USE_WITHOUT_ACCOUNT[0]} {cfg.COORDS_CHROME_USE_WITHOUT_ACCOUNT[1]}; '
+        'fi'
+    )
+    commands.append(conditional_tap_command)
+    commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây để màn hình tiếp theo xuất hiện.
 
+
+    # --- Chuỗi lệnh xử lý các màn hình cài đặt của Chrome theo thứ tự ---
     commands.append(cmd_tap(cfg.COORDS_CHROME_SYNC_NO[0], cfg.COORDS_CHROME_SYNC_NO[1])) # Chú thích: Nhấn vào tọa độ của nút "No, thanks" để bỏ qua việc đồng bộ.
     commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây để màn hình tiếp theo ("Chrome notifications") xuất hiện.
 
     commands.append(cmd_tap(cfg.COORDS_CHROME_NOTIF_CONTINUE[0], cfg.COORDS_CHROME_NOTIF_CONTINUE[1])) # Chú thích: Nhấn vào tọa độ của nút "Continue" để xử lý màn hình thông báo.
     commands.append(cmd_wait(5))                   # Chú thích: Chờ 5 giây để trang web tải file và hộp thoại cảnh báo có thể xuất hiện.
 
-    # --- (THAY ĐỔI) Sau khi đã qua các màn hình cài đặt, tiến hành tải file ---
-    # Nhấn vào nút "Download anyway" trên hộp thoại cảnh báo thay vì nhấn ENTER
+    # --- Sau khi đã qua các màn hình cài đặt, tiến hành tải file ---
+    # Nhấn vào nút "Download anyway" trên hộp thoại cảnh báo
     commands.append(cmd_tap(cfg.COORDS_CHROME_DOWNLOAD_ANYWAY[0], cfg.COORDS_CHROME_DOWNLOAD_ANYWAY[1])) # Chú thích: Nhấn vào nút "Download anyway" để xác nhận tải file.
     commands.append(cmd_wait(10))                  # Chú thích: Chờ 10 giây để đảm bảo tệp APK có đủ thời gian để tải về hoàn tất.
 
@@ -148,6 +159,7 @@ def generate_script():
     commands.append(cmd_tap(cfg.COORDS_ALLOW[0], cfg.COORDS_ALLOW[1])) # Chú thích: Nhấn "ALLOW" để cấp quyền quản trị thiết bị cho Shelter.
     commands.append(cmd_wait(5))                   # Chú thích: Chờ 5 giây để vào màn hình chính của Shelter.
 
+    # --- (ĐOẠN CHÈN THÊM) NHẤN HOME VÀ QUAY LẠI APP ---
     commands.append(cmd_keyevent(3))               # Chú thích: Nhấn phím HOME để quay về màn hình chính.
     commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây.
     commands.append(cmd_tap(cfg.COORDS_ICON_SHELTER_HOME[0], cfg.COORDS_ICON_SHELTER_HOME[1])) # Chú thích: Nhấn vào icon Shelter để mở lại app.
@@ -173,20 +185,20 @@ def generate_script():
     commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_tap(cfg.COORDS_CLONE_TO_SHELTER[0], cfg.COORDS_CLONE_TO_SHELTER[1])) # Chú thích: Nhấn vào nút "Clone to Shelter" để nhân bản ứng dụng.
-    commands.append(cmd_wait(10))                  # Chú thích: Chờ 10 giây để quá trình nhân bản hoàn tất.
+    commands.append(cmd_wait(3))                  # Chú thích: Chờ 3 giây để quá trình nhân bản hoàn tất.
 
     commands.append(cmd_tap(cfg.COORDS_GOOGLE_PLAY_SERVICES_ITEM[0], cfg.COORDS_GOOGLE_PLAY_SERVICES_ITEM[1])) # Chú thích: Nhấn vào ứng dụng "Google Play services".
     commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_tap(cfg.COORDS_CLONE_TO_SHELTER[0], cfg.COORDS_CLONE_TO_SHELTER[1])) # Chú thích: Nhấn "Clone to Shelter" để nhân bản dịch vụ Google Play.
-    commands.append(cmd_wait(10))                  # Chú thích: Chờ 10 giây để quá trình nhân bản hoàn tất.
+    commands.append(cmd_wait(3))                  # Chú thích: Chờ 3 giây để quá trình nhân bản hoàn tất.
 
     # --- BƯỚC 18-31: TẠO TÀI KHOẢN GOOGLE ---
     commands.append(cmd_keyevent(3))               # Chú thích: Nhấn phím HOME để quay về màn hình chính.
     commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây.
 
     commands.append(cmd_tap(cfg.COORDS_PLAY_STORE_ICON_HOME[0], cfg.COORDS_PLAY_STORE_ICON_HOME[1])) # Chú thích: Nhấn vào biểu tượng Play Store đã được nhân bản (có cặp sách).
-    commands.append(cmd_wait(10))                  # Chú thích: Chờ 10 giây để Play Store khởi động.
+    commands.append(cmd_wait(5))                  # Chú thích: Chờ 5 giây để Play Store khởi động.
 
     commands.append(cmd_tap(cfg.COORDS_SIGN_IN[0], cfg.COORDS_SIGN_IN[1])) # Chú thích: Nhấn vào nút "Sign in".
     commands.append(cmd_wait(7))                   # Chú thích: Chờ 7 giây để màn hình đăng nhập tải.
@@ -242,9 +254,6 @@ def generate_script():
 
     commands.append(cmd_tap(cfg.COORDS_CREATE_OWN_GMAIL[0], cfg.COORDS_CREATE_OWN_GMAIL[1])) # Chú thích: Nhấn vào tùy chọn "Create your own Gmail address".
     commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây.
-
-    commands.append(cmd_tap(cfg.COORDS_CUSTOM_GMAIL_INPUT[0], cfg.COORDS_CUSTOM_GMAIL_INPUT[1])) # Chú thích: Nhấn vào ô để nhập địa chỉ Gmail tùy chỉnh.
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_type_text(cfg.INPUT_GMAIL_USERNAME)) # Chú thích: Gõ tên người dùng Gmail mong muốn.
     commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
