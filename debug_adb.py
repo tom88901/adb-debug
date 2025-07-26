@@ -2,6 +2,8 @@ import shlex
 import random
 import string
 import time
+# Thêm thư viện sys để điều hướng luồng xuất
+import sys
 
 # ==============================================================================
 # PHẦN CẤU HÌNH - Tọa độ và thông tin của bạn đã được cập nhật sẵn
@@ -72,7 +74,6 @@ class Config:
 # ==============================================================================
 # PHẦN LOGIC - Các hàm để tạo ra các câu lệnh con
 # ==============================================================================
-
 def cmd_tap(x, y):
     # Hàm này tạo ra lệnh 'input tap' để mô phỏng một cú nhấn vào tọa độ (X, Y) trên màn hình.
     return f"input tap {x} {y}"
@@ -103,7 +104,6 @@ def cmd_start_chrome(url):
 # ==============================================================================
 # PHẦN CHÍNH - Nơi kịch bản được tạo ra
 # ==============================================================================
-
 def generate_script():
     commands = []
     cfg = Config()
@@ -120,15 +120,15 @@ def generate_script():
     random_digits = ''.join(random.choices(string.digits, k=4))
     cfg.INPUT_PASSWORD = f"{random_chars.capitalize()}{random_digits}"
     
-    # In thông tin đã tạo ra để theo dõi
-    print("--- ĐÃ TẠO THÔNG TIN NGƯỜI DÙNG NGẪU NHIÊN ---")
-    print(f"Ho: {cfg.INPUT_SURNAME}")
-    print(f"Ten: {cfg.INPUT_FIRST_NAME}")
-    print(f"Ngay sinh: {cfg.INPUT_DAY_OF_BIRTH}")
-    print(f"Nam sinh: {cfg.INPUT_YEAR_OF_BIRTH}")
-    print(f"Gmail: {cfg.INPUT_GMAIL_USERNAME}")
-    print(f"Mat khau: {cfg.INPUT_PASSWORD}")
-    print("------------------------------------------")
+    # In thông tin đã tạo ra để theo dõi (in ra stderr)
+    print("--- ĐÃ TẠO THÔNG TIN NGƯỜI DÙNG NGẪU NHIÊN ---", file=sys.stderr)
+    print(f"Ho: {cfg.INPUT_SURNAME}", file=sys.stderr)
+    print(f"Ten: {cfg.INPUT_FIRST_NAME}", file=sys.stderr)
+    print(f"Ngay sinh: {cfg.INPUT_DAY_OF_BIRTH}", file=sys.stderr)
+    print(f"Nam sinh: {cfg.INPUT_YEAR_OF_BIRTH}", file=sys.stderr)
+    print(f"Gmail: {cfg.INPUT_GMAIL_USERNAME}", file=sys.stderr)
+    print(f"Mat khau: {cfg.INPUT_PASSWORD}", file=sys.stderr)
+    print("------------------------------------------", file=sys.stderr)
 
 
     # --- BƯỚC 0: TẢI VÀ CÀI ĐẶT SHELTER (DÙNG TỌA ĐỘ TUYỆT ĐỐI) ---
@@ -314,10 +314,16 @@ def generate_script():
     return full_script
 
 # ==============================================================================
-# ĐIỂM BẮT ĐẦU CHẠY SCRIPTT
+# ĐIỂM BẮT ĐẦU CHẠY SCRIPT
 # ==============================================================================
 if __name__ == "__main__":
     final_script = generate_script()
-    print("========= SAO CHÉP TOÀN BỘ LỆNH BÊN DƯỚI =========")
+    
+    # Chỉ in ra thông báo cho người dùng trên màn hình console (in ra stderr)
+    print("========= SAO CHÉP TOÀN BỘ LỆNH BÊN DƯỚI =========", file=sys.stderr)
+    
+    # Chỉ in chuỗi lệnh cuối cùng ra stdout (để chuyển hướng vào file)
     print(final_script)
-    print("===================================================")
+    
+    # Chỉ in ra thông báo cho người dùng trên màn hình console (in ra stderr)
+    print("===================================================", file=sys.stderr)
