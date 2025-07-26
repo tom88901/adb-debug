@@ -1,9 +1,17 @@
 import shlex
+import random
+import string
+import time
 
 # ==============================================================================
 # PHẦN CẤU HÌNH - Tọa độ và thông tin của bạn đã được cập nhật sẵn
 # ==============================================================================
 class Config:
+    # --- (THÊM MỚI) DANH SÁCH ĐỂ TẠO TÊN NGẪU NHIÊN ---
+    HO_VIETNAM = ["Nguyen", "Tran", "Le", "Pham", "Hoang", "Huynh", "Phan", "Vu", "Vo", "Dang", "Bui", "Do", "Ho", "Ngo", "Duong"]
+    TEN_VIETNAM = ["Anh", "Binh", "Chau", "Dung", "Giang", "Hien", "Khanh", "Linh", "Minh", "Nam", "Phuong", "Quan", "Son", "Thang", "Trang", "Tuan", "Van", "Xuan", "Yen"]
+
+
     # --- Thông tin cho bước tải và cài đặt ---
     APK_DOWNLOAD_URL = "https://raw.githubusercontent.com/tom88901/apk_debug/main/Shelter.apk" # Chú thích: Đường link URL trực tiếp để tải về tệp Shelter.apk.
     APK_PATH_IN_VM = "/sdcard/Download/Shelter.apk" # Chú thích: Đường dẫn lưu tệp APK sau khi tải về trên máy ảo, thường là trong thư mục Download.
@@ -53,13 +61,13 @@ class Config:
     COORDS_TAP_AFTER_GMAIL = (690, 216)               # Chú thích: Tọa độ nhấn bất kỳ sau khi nhập Gmail.
 
 
-    # --- Thông tin người dùng để điền vào các biểu mẫu ---
-    INPUT_FIRST_NAME = "Van A"                    # Chú thích: Giá trị Tên sẽ được gõ vào.
-    INPUT_SURNAME = "Nguyen"                      # Chú thích: Giá trị Họ sẽ được gõ vào.
-    INPUT_DAY_OF_BIRTH = "15"                     # Chú thích: Giá trị Ngày sinh sẽ được gõ vào.
-    INPUT_YEAR_OF_BIRTH = "1995"                  # Chú thích: Giá trị Năm sinh sẽ được gõ vào.
-    INPUT_GMAIL_USERNAME = "nguyenvan.a95.test"   # Chú thích: Tên người dùng Gmail mong muốn sẽ được gõ vào.
-    INPUT_PASSWORD = "Password_cua_ban_123"       # Chú thích: Mật khẩu cho tài khoản Google sẽ được gõ vào.
+    # --- Thông tin người dùng (sẽ được tạo tự động) ---
+    INPUT_FIRST_NAME = ""
+    INPUT_SURNAME = ""
+    INPUT_DAY_OF_BIRTH = ""
+    INPUT_YEAR_OF_BIRTH = ""
+    INPUT_GMAIL_USERNAME = ""
+    INPUT_PASSWORD = ""
 
 # ==============================================================================
 # PHẦN LOGIC - Các hàm để tạo ra các câu lệnh con
@@ -100,17 +108,37 @@ def generate_script():
     commands = []
     cfg = Config()
 
-    # --- BƯỚC 0: TẢI VÀ CÀI ĐẶT SHELTER (DÙNG TỌA ĐỘ TUYỆT ĐỐI) ---
+    # --- TẠO THÔNG TIN NGƯỜI DÙNG NGẪU NHIÊN ---
+    cfg.INPUT_SURNAME = random.choice(cfg.HO_VIETNAM)
+    cfg.INPUT_FIRST_NAME = random.choice(cfg.TEN_VIETNAM)
+    cfg.INPUT_DAY_OF_BIRTH = str(random.randint(1, 28))
+    cfg.INPUT_YEAR_OF_BIRTH = str(random.randint(1990, 2004))
+    
+    cfg.INPUT_GMAIL_USERNAME = f"{cfg.INPUT_FIRST_NAME.lower()}.{cfg.INPUT_SURNAME.lower()}.{cfg.INPUT_YEAR_OF_BIRTH}"
+    
+    random_chars = ''.join(random.choices(string.ascii_letters, k=8))
+    random_digits = ''.join(random.choices(string.digits, k=4))
+    cfg.INPUT_PASSWORD = f"{random_chars.capitalize()}{random_digits}"
+    
+    # In thông tin đã tạo ra để theo dõi
+    print("--- ĐÃ TẠO THÔNG TIN NGƯỜI DÙNG NGẪU NHIÊN ---")
+    print(f"Ho: {cfg.INPUT_SURNAME}")
+    print(f"Ten: {cfg.INPUT_FIRST_NAME}")
+    print(f"Ngay sinh: {cfg.INPUT_DAY_OF_BIRTH}")
+    print(f"Nam sinh: {cfg.INPUT_YEAR_OF_BIRTH}")
+    print(f"Gmail: {cfg.INPUT_GMAIL_USERNAME}")
+    print(f"Mat khau: {cfg.INPUT_PASSWORD}")
+    print("------------------------------------------")
 
+
+    # --- BƯỚC 0: TẢI VÀ CÀI ĐẶT SHELTER (DÙNG TỌA ĐỘ TUYỆT ĐỐI) ---
     commands.append("pm clear com.android.chrome") # Chú thích: Xóa sạch dữ liệu của Chrome để đưa về trạng thái gốc, đảm bảo kịch bản luôn bắt đầu từ điểm xuất phát giống nhau.
     commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây để hệ thống hoàn tất việc dọn dẹp.
 
     commands.append(cmd_start_chrome(cfg.APK_DOWNLOAD_URL)) # Chú thích: Mở ứng dụng Chrome với đường link tải tệp APK.
     commands.append(cmd_wait(5))                   # Chú thích: Chờ 5 giây để Chrome có thời gian khởi động và hiển thị màn hình đầu tiên.
 
-    # --- (THAY ĐỔI LOGIC) Xử lý 2 trường hợp màn hình chào mừng của Chrome ---
-    # Tạo lệnh điều kiện: dump UI, kiểm tra xem có chữ "Accept & continue" không, nếu có thì nhấn vào tọa độ 1, không thì nhấn tọa độ 2.
-    # Lưu ý: grep tìm "Accept &amp; continue" vì ký tự "&" được mã hóa thành "&amp;" trong file XML.
+    # --- Xử lý 2 trường hợp màn hình chào mừng của Chrome ---
     conditional_tap_command = (
         'uiautomator dump && '
         'if (grep -q "Accept &amp; continue" /sdcard/window_dump.xml); '
@@ -121,7 +149,6 @@ def generate_script():
     commands.append(conditional_tap_command)
     commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây để màn hình tiếp theo xuất hiện.
 
-
     # --- Chuỗi lệnh xử lý các màn hình cài đặt của Chrome theo thứ tự ---
     commands.append(cmd_tap(cfg.COORDS_CHROME_SYNC_NO[0], cfg.COORDS_CHROME_SYNC_NO[1])) # Chú thích: Nhấn vào tọa độ của nút "No, thanks" để bỏ qua việc đồng bộ.
     commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây để màn hình tiếp theo ("Chrome notifications") xuất hiện.
@@ -130,7 +157,6 @@ def generate_script():
     commands.append(cmd_wait(5))                   # Chú thích: Chờ 5 giây để trang web tải file và hộp thoại cảnh báo có thể xuất hiện.
 
     # --- Sau khi đã qua các màn hình cài đặt, tiến hành tải file ---
-    # Nhấn vào nút "Download anyway" trên hộp thoại cảnh báo
     commands.append(cmd_tap(cfg.COORDS_CHROME_DOWNLOAD_ANYWAY[0], cfg.COORDS_CHROME_DOWNLOAD_ANYWAY[1])) # Chú thích: Nhấn vào nút "Download anyway" để xác nhận tải file.
     commands.append(cmd_wait(10))                  # Chú thích: Chờ 10 giây để đảm bảo tệp APK có đủ thời gian để tải về hoàn tất.
 
@@ -274,9 +300,16 @@ def generate_script():
     commands.append(cmd_wait(5))                   # Chú thích: Chờ 5 giây.
 
     commands.append(cmd_tap(cfg.COORDS_SKIP_OR_NEXT_FINAL[0], cfg.COORDS_SKIP_OR_NEXT_FINAL[1])) # Chú thích: Nhấn "Next" hoặc "Skip" ở các bước cuối cùng.
+    
+    # --- HIỂN THỊ THÔNG TIN TÀI KHOẢN TRÊN CONSOLE ---
+    display_credentials_command = (
+        f"echo '========== TAI KHOAN DA TAO =========='; "
+        f"echo 'Gmail: {cfg.INPUT_GMAIL_USERNAME}'; "
+        f"echo 'Mat khau: {cfg.INPUT_PASSWORD}'; "
+        f"echo '======================================='"
+    )
+    commands.append(display_credentials_command)
 
-    # Chú thích: Tạo ra một chuỗi lệnh duy nhất, nối tất cả các lệnh con bằng "&&".
-    # "&&" đảm bảo rằng lệnh tiếp theo chỉ được thực thi nếu lệnh trước đó thành công.
     full_script = " && ".join(commands)
     return full_script
 
@@ -284,9 +317,7 @@ def generate_script():
 # ĐIỂM BẮT ĐẦU CHẠY SCRIPT
 # ==============================================================================
 if __name__ == "__main__":
-    # Chú thích: Gọi hàm generate_script() để tạo ra chuỗi lệnh hoàn chỉnh.
     final_script = generate_script()
-    # Chú thích: In ra chuỗi lệnh để người dùng có thể sao chép.
     print("========= SAO CHÉP TOÀN BỘ LỆNH BÊN DƯỚI =========")
     print(final_script)
     print("===================================================")
