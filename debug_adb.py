@@ -5,54 +5,54 @@ import shlex
 # ==============================================================================
 class Config:
     # --- Thông tin cho bước tải và cài đặt ---
-    APK_DOWNLOAD_URL = "https://raw.githubusercontent.com/tom88901/apk_debug/main/Shelter.apk"
-    APK_PATH_IN_VM = "/sdcard/Download/Shelter.apk"
+    APK_DOWNLOAD_URL = "https://raw.githubusercontent.com/tom88901/apk_debug/main/Shelter.apk" # Chú thích: Đường link URL trực tiếp để tải về tệp Shelter.apk.
+    APK_PATH_IN_VM = "/sdcard/Download/Shelter.apk" # Chú thích: Đường dẫn lưu tệp APK sau khi tải về trên máy ảo, thường là trong thư mục Download.
 
     # !!! THAY ĐỔI QUAN TRỌNG: Tọa độ tuyệt đối cho 3 nút cài đặt của Chrome
     # BẠN CẦN LẤY VÀ CẬP NHẬT 3 TỌA ĐỘ NÀY BẰNG CÔNG CỤ "VỊ TRÍ CON TRỎ"
-    COORDS_CHROME_ACCEPT = (356, 1181)           # Tọa độ (X, Y) của nút "Accept & continue"
-    COORDS_CHROME_SYNC_NO = (101, 1200)           # Tọa độ (X, Y) của nút "No, thanks"
-    COORDS_CHROME_NOTIF_CONTINUE = (337, 1051)    # Tọa độ (X, Y) của nút "Continue"
-    
-    # --- Tọa độ cho các bước còn lại ---
-    COORDS_ICON_SHELTER_HOME = (274, 294)
-    COORDS_NEXT_BUTTON = (578, 1222)
-    COORDS_ACCEPT_CONTINUE = (528, 1204)
-    COORDS_ALLOW = (368, 706)
-    COORDS_3_DOTS_MENU = (674, 98)
-    COORDS_SHOW_ALL_APPS = (646, 488)
-    COORDS_CONTINUE = (566, 854)
-    COORDS_SEARCH_ICON = (472, 96)
-    COORDS_GOOGLE_PLAY_STORE_ITEM = (222, 228)
-    COORDS_CLONE_TO_SHELTER = (262, 732)
-    COORDS_GOOGLE_PLAY_SERVICES_ITEM = (262, 386)
-    COORDS_PLAY_STORE_ICON_HOME = (434, 278)
-    COORDS_SIGN_IN = (354, 950)
-    COORDS_CREATE_ACCOUNT = (134, 896)
-    COORDS_FIRST_NAME_INPUT = (152, 486)
-    COORDS_SURNAME_INPUT = (168, 640)
-    COORDS_NEXT_AFTER_NAME = (586, 708)
-    COORDS_DAY_INPUT = (102, 488)
-    COORDS_MONTH_DROPDOWN = (362, 488)
-    COORDS_MONTH_FEBRUARY = (358, 708)
-    COORDS_YEAR_INPUT = (544, 488)
-    COORDS_GENDER_DROPDOWN = (160, 628)
-    COORDS_GENDER_MALE_OR_FEMALE = (202, 310)
-    COORDS_NEXT_AFTER_DOB = (592, 1210)
-    COORDS_CREATE_OWN_GMAIL = (162, 690)
-    COORDS_CUSTOM_GMAIL_INPUT = (126, 840)
-    COORDS_NEXT_AFTER_GMAIL = (594, 708)
-    COORDS_PASSWORD_INPUT = (106, 540)
-    COORDS_NEXT_AFTER_PASSWORD = (592, 710)
-    COORDS_SKIP_OR_NEXT_FINAL = (590, 1198)
+    COORDS_CHROME_ACCEPT = (356, 1181)           # Chú thích: Tọa độ (X, Y) của nút "Accept & continue" trên màn hình Welcome của Chrome.
+    COORDS_CHROME_SYNC_NO = (101, 1200)           # Chú thích: Tọa độ (X, Y) của nút "No, thanks" trên màn hình "Turn on sync?".
+    COORDS_CHROME_NOTIF_CONTINUE = (337, 1051)    # Chú thích: Tọa độ (X, Y) của nút "Continue" trên màn hình "Chrome notifications".
 
-    # --- Thông tin người dùng ---
-    INPUT_FIRST_NAME = "Van A"
-    INPUT_SURNAME = "Nguyen"
-    INPUT_DAY_OF_BIRTH = "15"
-    INPUT_YEAR_OF_BIRTH = "1995"
-    INPUT_GMAIL_USERNAME = "nguyenvan.a95.test"
-    INPUT_PASSWORD = "Password_cua_ban_123"
+    # --- Tọa độ cho các bước còn lại của kịch bản ---
+    COORDS_ICON_SHELTER_HOME = (274, 294)         # Chú thích: Tọa độ của biểu tượng ứng dụng Shelter trên màn hình chính.
+    COORDS_NEXT_BUTTON = (578, 1222)              # Chú thích: Tọa độ chung cho các nút "Next" hoặc "Continue" trong quá trình cài đặt Shelter.
+    COORDS_ACCEPT_CONTINUE = (528, 1204)          # Chú thích: Tọa độ của nút "Accept and continue" để đồng ý điều khoản của Shelter.
+    COORDS_ALLOW = (368, 706)                     # Chú thích: Tọa độ của nút "ALLOW" để cấp quyền quản trị thiết bị cho Shelter.
+    COORDS_3_DOTS_MENU = (674, 98)                # Chú thích: Tọa độ của menu 3 chấm trong ứng dụng Shelter.
+    COORDS_SHOW_ALL_APPS = (646, 488)             # Chú thích: Tọa độ của mục "Show All Apps" trong menu của Shelter.
+    COORDS_CONTINUE = (566, 854)                  # Chú thích: Tọa độ của nút "CONTINUE" khi vào danh sách ứng dụng hệ thống.
+    COORDS_SEARCH_ICON = (472, 96)                # Chú thích: Tọa độ của biểu tượng kính lúp để tìm kiếm ứng dụng.
+    COORDS_GOOGLE_PLAY_STORE_ITEM = (222, 228)    # Chú thích: Tọa độ của ứng dụng "Google Play Store" trong danh sách kết quả tìm kiếm.
+    COORDS_CLONE_TO_SHELTER = (262, 732)          # Chú thích: Tọa độ của nút "Clone to Shelter" để nhân bản ứng dụng.
+    COORDS_GOOGLE_PLAY_SERVICES_ITEM = (262, 386) # Chú thích: Tọa độ của "Google Play services" trong danh sách ứng dụng.
+    COORDS_PLAY_STORE_ICON_HOME = (434, 278)      # Chú thích: Tọa độ của biểu tượng Play Store đã được nhân bản (có hình cặp sách).
+    COORDS_SIGN_IN = (354, 950)                   # Chú thích: Tọa độ của nút "Sign in" trong Google Play Store.
+    COORDS_CREATE_ACCOUNT = (134, 896)            # Chú thích: Tọa độ của nút "Create account" để bắt đầu tạo tài khoản Google.
+    COORDS_FIRST_NAME_INPUT = (152, 486)          # Chú thích: Tọa độ của ô nhập "First name" (Tên).
+    COORDS_SURNAME_INPUT = (168, 640)             # Chú thích: Tọa độ của ô nhập "Surname" (Họ).
+    COORDS_NEXT_AFTER_NAME = (586, 708)           # Chú thích: Tọa độ của nút "Next" sau khi đã nhập tên.
+    COORDS_DAY_INPUT = (102, 488)                 # Chú thích: Tọa độ của ô nhập "Day" (Ngày sinh).
+    COORDS_MONTH_DROPDOWN = (362, 488)            # Chú thích: Tọa độ của ô chọn "Month" (Tháng sinh).
+    COORDS_MONTH_FEBRUARY = (358, 708)            # Chú thích: Tọa độ của lựa chọn "February" (Tháng hai) trong danh sách tháng.
+    COORDS_YEAR_INPUT = (544, 488)                # Chú thích: Tọa độ của ô nhập "Year" (Năm sinh).
+    COORDS_GENDER_DROPDOWN = (160, 628)           # Chú thích: Tọa độ của ô chọn "Gender" (Giới tính).
+    COORDS_GENDER_MALE_OR_FEMALE = (202, 310)     # Chú thích: Tọa độ của một lựa chọn giới tính (ví dụ: Male/Female).
+    COORDS_NEXT_AFTER_DOB = (592, 1210)           # Chú thích: Tọa độ của nút "Next" sau khi nhập xong ngày tháng năm sinh.
+    COORDS_CREATE_OWN_GMAIL = (162, 690)          # Chú thích: Tọa độ của tùy chọn "Create your own Gmail address".
+    COORDS_CUSTOM_GMAIL_INPUT = (126, 840)        # Chú thích: Tọa độ của ô để nhập địa chỉ Gmail tùy chỉnh.
+    COORDS_NEXT_AFTER_GMAIL = (594, 708)          # Chú thích: Tọa độ của nút "Next" sau khi nhập Gmail.
+    COORDS_PASSWORD_INPUT = (106, 540)            # Chú thích: Tọa độ của ô nhập "Password" (Mật khẩu).
+    COORDS_NEXT_AFTER_PASSWORD = (592, 710)       # Chú thích: Tọa độ của nút "Next" sau khi nhập mật khẩu.
+    COORDS_SKIP_OR_NEXT_FINAL = (590, 1198)       # Chú thích: Tọa độ của nút "Next" hoặc "Skip" ở các bước cuối cùng của việc tạo tài khoản.
+
+    # --- Thông tin người dùng để điền vào các biểu mẫu ---
+    INPUT_FIRST_NAME = "Van A"                    # Chú thích: Giá trị Tên sẽ được gõ vào.
+    INPUT_SURNAME = "Nguyen"                      # Chú thích: Giá trị Họ sẽ được gõ vào.
+    INPUT_DAY_OF_BIRTH = "15"                     # Chú thích: Giá trị Ngày sinh sẽ được gõ vào.
+    INPUT_YEAR_OF_BIRTH = "1995"                  # Chú thích: Giá trị Năm sinh sẽ được gõ vào.
+    INPUT_GMAIL_USERNAME = "nguyenvan.a95.test"   # Chú thích: Tên người dùng Gmail mong muốn sẽ được gõ vào.
+    INPUT_PASSWORD = "Password_cua_ban_123"       # Chú thích: Mật khẩu cho tài khoản Google sẽ được gõ vào.
 
 # ==============================================================================
 # PHẦN LOGIC - Các hàm để tạo ra các câu lệnh con
