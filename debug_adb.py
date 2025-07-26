@@ -314,7 +314,7 @@ def generate_script():
     return full_script
 
 # ==============================================================================
-# ĐIỂM BẮT ĐẦU CHẠY SCRIPT
+# ĐIỂM BẮT ĐẦU CHẠY SCRIPTT
 # ==============================================================================
 if __name__ == "__main__":
     final_script = generate_script()
