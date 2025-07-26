@@ -1,3 +1,4 @@
+#Đầu tiên cần clone file shell từ đám mây vào máy ảo.
 #Để chắc chắn tệp đã ở đúng vị trí, hãy chạy lệnh ls để liệt kê các tệp trong thư mục Download.
 
 ls /sdcard/Download/
