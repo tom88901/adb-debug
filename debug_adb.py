@@ -44,7 +44,7 @@ class Config:
     COORDS_GOOGLE_PLAY_SERVICES_ITEM = (262, 386) # Chú thích: Tọa độ của "Google Play services" trong danh sách ứng dụng.
     COORDS_PLAY_STORE_ICON_HOME = (434, 278)      # Chú thích: Tọa độ của biểu tượng Play Store đã được nhân bản (có hình cặp sách).
     COORDS_SIGN_IN = (354, 950)                   # Chú thích: Tọa độ của nút "Sign in" trong Google Play Store.
-    COORDS_CREATE_ACCOUNT = (134, 896)            # Chú thích: Tọa độ của nút "Create account" để bắt đầu tạo tài khoản Google.
+    COORDS_CREATE_ACCOUNT = (129, 1184)            # Chú thích: Tọa độ của nút "Create account" để bắt đầu tạo tài khoản Google.
     COORDS_FOR_MY_PERSONAL_USE = (158, 604)       # Chú thích: Tọa độ của tùy chọn "For my personal use" (Đã thêm để sửa lỗi).
     COORDS_FIRST_NAME_INPUT = (152, 486)          # Chú thích: Tọa độ của ô nhập "First name" (Tên).
     COORDS_SURNAME_INPUT = (168, 640)             # Chú thích: Tọa độ của ô nhập "Surname" (Họ).
