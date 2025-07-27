@@ -82,6 +82,11 @@ def cmd_tap(x, y):
     # Hàm này tạo ra lệnh 'input tap' để mô phỏng một cú nhấn vào tọa độ (X, Y) trên màn hình.
     return f"input tap {x} {y}"
 
+def cmd_double_tap(x, y):
+    # (HÀM MỚI) Hàm này tạo ra một chuỗi lệnh để mô phỏng một cú nhấn đúp (double tap).
+    # Nó bao gồm hai cú nhấn liên tiếp với một khoảng nghỉ rất ngắn (0.1 giây) ở giữa.
+    return f"input tap {x} {y} && sleep 0.1 && input tap {x} {y}"
+
 def cmd_type_text(text):
     # Hàm này tạo ra lệnh 'input text' để gõ một chuỗi văn bản vào ô đang được chọn (focus).
     # shlex.quote giúp xử lý các ký tự đặc biệt trong văn bản một cách an toàn.
@@ -209,8 +214,10 @@ def generate_script():
     commands.append(cmd_tap(cfg.COORDS_ACCEPT_CONTINUE[0], cfg.COORDS_ACCEPT_CONTINUE[1])) # Chú thích: Nhấn vào nút "Accept and continue" để đồng ý với điều khoản.
     commands.append(cmd_wait(rand_wait(17, 3)))                  # Chú thích: Chờ 17 giây để Shelter thiết lập môi trường làm việc.
 
+    # --- (ĐÃ CẬP NHẬT) SỬ DỤNG LỆNH NHẤN ĐÚP ---
     commands.append(cmd_double_tap(cfg.COORDS_NEXT_AFTER_SETUP[0], cfg.COORDS_NEXT_AFTER_SETUP[1])) # Chú thích: Nhấn đúp vào nút "Next" sau khi thiết lập xong.
-    commands.append(cmd_wait(rand_wait(8, 2)))                  # Chú thích: Chờ 8 giây để màn hình yêu cầu quyền xuất hiện.
+    
+    commands.append(cmd_wait(rand_wait(10, 2)))                  # Chú thích: Chờ 10 giây để màn hình yêu cầu quyền xuất hiện.
 
     commands.append(cmd_tap(cfg.COORDS_ALLOW[0], cfg.COORDS_ALLOW[1])) # Chú thích: Nhấn "ALLOW" để cấp quyền quản trị thiết bị cho Shelter.
     commands.append(cmd_wait(rand_wait(5, 1)))                   # Chú thích: Chờ 5 giây để vào màn hình chính của Shelter.
