@@ -84,9 +84,10 @@ def cmd_type_text(text):
     safe_text = shlex.quote(text)
     return f"input text {safe_text}"
 
-def cmd_wait(seconds):
+def cmd_wait(seconds_str):
     # Hàm này tạo ra lệnh 'sleep' để tạm dừng kịch bản trong một khoảng thời gian (giây) nhất định.
-    return f"sleep {seconds}"
+    # ĐÃ SỬA: Chấp nhận chuỗi để tương thích với random.uniform
+    return f"sleep {seconds_str}"
 
 def cmd_keyevent(keycode):
     # Hàm này tạo ra lệnh 'input keyevent' để mô phỏng việc nhấn một phím cứng trên thiết bị (ví dụ: phím Home, Back, Enter).
@@ -114,11 +115,26 @@ def generate_script():
     cfg.INPUT_DAY_OF_BIRTH = str(random.randint(1, 28))
     cfg.INPUT_YEAR_OF_BIRTH = str(random.randint(1990, 2004))
     
-    cfg.INPUT_GMAIL_USERNAME = f"{cfg.INPUT_FIRST_NAME.lower()}.{cfg.INPUT_SURNAME.lower()}.{cfg.INPUT_YEAR_OF_BIRTH}"
+    # --- (GIẢI PHÁP 1) TẠO USERNAME THÔNG MINH HƠN ---
+    first_name_lower = cfg.INPUT_FIRST_NAME.lower()
+    surname_lower = cfg.INPUT_SURNAME.lower()
+    year_short = cfg.INPUT_YEAR_OF_BIRTH[2:]
+    random_numbers = ''.join(random.choices(string.digits, k=4))
+    username_patterns = [
+        f"{first_name_lower}{surname_lower}{year_short}",
+        f"{surname_lower}.{first_name_lower}{random_numbers}",
+        f"{first_name_lower}_{cfg.INPUT_YEAR_OF_BIRTH}",
+        f"{surname_lower}{first_name_lower}_{random_numbers}"
+    ]
+    cfg.INPUT_GMAIL_USERNAME = random.choice(username_patterns)
     
-    random_chars = ''.join(random.choices(string.ascii_letters, k=8))
-    random_digits = ''.join(random.choices(string.digits, k=4))
-    cfg.INPUT_PASSWORD = f"{random_chars.capitalize()}{random_digits}"
+    # --- (GIẢI PHÁP 2) TẠO MẬT KHẨU "GIỐNG NGƯỜI" HƠN ---
+    words = ["xanh", "do", "tim", "vang", "buon", "vui", "nho", "yeu", "mua", "nang", "sky", "sun", "moon", "happy"]
+    random_word1 = random.choice(words)
+    random_word2 = random.choice(words)
+    random_nums_pass = ''.join(random.choices(string.digits, k=3))
+    special_char = random.choice("!@#$")
+    cfg.INPUT_PASSWORD = f"{random_word1.capitalize()}{random_word2}{random_nums_pass}{special_char}"
     
     # In thông tin đã tạo ra để theo dõi (in ra stderr)
     print("--- ĐÃ TẠO THÔNG TIN NGƯỜI DÙNG NGẪU NHIÊN ---", file=sys.stderr)
@@ -130,13 +146,18 @@ def generate_script():
     print(f"Mat khau: {cfg.INPUT_PASSWORD}", file=sys.stderr)
     print("------------------------------------------", file=sys.stderr)
 
+    # --- (GIẢI PHÁP 3) SỬ DỤNG THỜI GIAN CHỜ NGẪU NHIÊN ---
+    def rand_wait(base, variance=0.5):
+        # Hàm trợ giúp để tạo thời gian chờ ngẫu nhiên
+        # Ví dụ: rand_wait(3) sẽ cho ra số ngẫu nhiên từ 2.5 đến 3.5
+        return f"{random.uniform(base - variance, base + variance):.2f}"
 
     # --- BƯỚC 0: TẢI VÀ CÀI ĐẶT SHELTER (DÙNG TỌA ĐỘ TUYỆT ĐỐI) ---
     commands.append("pm clear com.android.chrome") # Chú thích: Xóa sạch dữ liệu của Chrome để đưa về trạng thái gốc, đảm bảo kịch bản luôn bắt đầu từ điểm xuất phát giống nhau.
-    commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây để hệ thống hoàn tất việc dọn dẹp.
+    commands.append(cmd_wait(rand_wait(3)))                   # Chú thích: Chờ 3 giây để hệ thống hoàn tất việc dọn dẹp.
 
     commands.append(cmd_start_chrome(cfg.APK_DOWNLOAD_URL)) # Chú thích: Mở ứng dụng Chrome với đường link tải tệp APK.
-    commands.append(cmd_wait(5))                   # Chú thích: Chờ 5 giây để Chrome có thời gian khởi động và hiển thị màn hình đầu tiên.
+    commands.append(cmd_wait(rand_wait(5, 1)))                   # Chú thích: Chờ 5 giây để Chrome có thời gian khởi động và hiển thị màn hình đầu tiên.
 
     # --- Xử lý 2 trường hợp màn hình chào mừng của Chrome ---
     conditional_tap_command = (
@@ -147,164 +168,163 @@ def generate_script():
         'fi'
     )
     commands.append(conditional_tap_command)
-    commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây để màn hình tiếp theo xuất hiện.
+    commands.append(cmd_wait(rand_wait(3)))                   # Chú thích: Chờ 3 giây để màn hình tiếp theo xuất hiện.
 
     # --- Chuỗi lệnh xử lý các màn hình cài đặt của Chrome theo thứ tự ---
     commands.append(cmd_tap(cfg.COORDS_CHROME_SYNC_NO[0], cfg.COORDS_CHROME_SYNC_NO[1])) # Chú thích: Nhấn vào tọa độ của nút "No, thanks" để bỏ qua việc đồng bộ.
-    commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây để màn hình tiếp theo ("Chrome notifications") xuất hiện.
+    commands.append(cmd_wait(rand_wait(3)))                   # Chú thích: Chờ 3 giây để màn hình tiếp theo ("Chrome notifications") xuất hiện.
 
     commands.append(cmd_tap(cfg.COORDS_CHROME_NOTIF_CONTINUE[0], cfg.COORDS_CHROME_NOTIF_CONTINUE[1])) # Chú thích: Nhấn vào tọa độ của nút "Continue" để xử lý màn hình thông báo.
-    commands.append(cmd_wait(5))                   # Chú thích: Chờ 5 giây để trang web tải file và hộp thoại cảnh báo có thể xuất hiện.
+    commands.append(cmd_wait(rand_wait(5, 1)))                   # Chú thích: Chờ 5 giây để trang web tải file và hộp thoại cảnh báo có thể xuất hiện.
 
     # --- Sau khi đã qua các màn hình cài đặt, tiến hành tải file ---
     commands.append(cmd_tap(cfg.COORDS_CHROME_DOWNLOAD_ANYWAY[0], cfg.COORDS_CHROME_DOWNLOAD_ANYWAY[1])) # Chú thích: Nhấn vào nút "Download anyway" để xác nhận tải file.
-    commands.append(cmd_wait(10))                  # Chú thích: Chờ 10 giây để đảm bảo tệp APK có đủ thời gian để tải về hoàn tất.
+    commands.append(cmd_wait(rand_wait(10, 2)))                  # Chú thích: Chờ 10 giây để đảm bảo tệp APK có đủ thời gian để tải về hoàn tất.
 
     commands.append(cmd_install_apk(cfg.APK_PATH_IN_VM)) # Chú thích: Cài đặt tệp APK vừa tải về từ thư mục Download.
-    commands.append(cmd_wait(10))                  # Chú thích: Chờ 10 giây để quá trình cài đặt ứng dụng Shelter hoàn tất.
+    commands.append(cmd_wait(rand_wait(10, 2)))                  # Chú thích: Chờ 10 giây để quá trình cài đặt ứng dụng Shelter hoàn tất.
 
     commands.append(cmd_keyevent(3))               # Chú thích: Nhấn phím HOME để quay về màn hình chính của thiết bị.
-    commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây để màn hình chính ổn định.
-
+    commands.append(cmd_wait(rand_wait(3)))                   # Chú thích: Chờ 3 giây để màn hình chính ổn định.
 
     # --- BƯỚC 1-9: CÀI ĐẶT SHELTER ---
     commands.append(cmd_tap(cfg.COORDS_ICON_SHELTER_HOME[0], cfg.COORDS_ICON_SHELTER_HOME[1])) # Chú thích: Nhấn vào biểu tượng ứng dụng Shelter trên màn hình chính.
-    commands.append(cmd_wait(4))                   # Chú thích: Chờ 4 giây để ứng dụng khởi động.
+    commands.append(cmd_wait(rand_wait(4)))                   # Chú thích: Chờ 4 giây để ứng dụng khởi động.
 
     # Chú thích: Vòng lặp để nhấn nút "Next" hoặc "Continue" 4 lần liên tiếp.
     for _ in range(4):
         commands.append(cmd_tap(cfg.COORDS_NEXT_BUTTON[0], cfg.COORDS_NEXT_BUTTON[1])) # Chú thích: Nhấn vào nút "Next".
-        commands.append(cmd_wait(2))               # Chú thích: Chờ 2 giây giữa mỗi lần nhấn.
+        commands.append(cmd_wait(rand_wait(2)))               # Chú thích: Chờ 2 giây giữa mỗi lần nhấn.
 
     commands.append(cmd_tap(cfg.COORDS_ACCEPT_CONTINUE[0], cfg.COORDS_ACCEPT_CONTINUE[1])) # Chú thích: Nhấn vào nút "Accept and continue" để đồng ý với điều khoản.
-    commands.append(cmd_wait(18))                  # Chú thích: Chờ 18 giây để Shelter thiết lập môi trường làm việc.
+    commands.append(cmd_wait(rand_wait(18, 3)))                  # Chú thích: Chờ 18 giây để Shelter thiết lập môi trường làm việc.
 
     commands.append(cmd_tap(cfg.COORDS_NEXT_BUTTON[0], cfg.COORDS_NEXT_BUTTON[1])) # Chú thích: Nhấn nút "Next" sau khi thiết lập xong.
-    commands.append(cmd_wait(10))                  # Chú thích: Chờ 10 giây để màn hình yêu cầu quyền xuất hiện.
+    commands.append(cmd_wait(rand_wait(10, 2)))                  # Chú thích: Chờ 10 giây để màn hình yêu cầu quyền xuất hiện.
 
     commands.append(cmd_tap(cfg.COORDS_ALLOW[0], cfg.COORDS_ALLOW[1])) # Chú thích: Nhấn "ALLOW" để cấp quyền quản trị thiết bị cho Shelter.
-    commands.append(cmd_wait(5))                   # Chú thích: Chờ 5 giây để vào màn hình chính của Shelter.
+    commands.append(cmd_wait(rand_wait(5, 1)))                   # Chú thích: Chờ 5 giây để vào màn hình chính của Shelter.
 
     # --- (ĐOẠN CHÈN THÊM) NHẤN HOME VÀ QUAY LẠI APP ---
     commands.append(cmd_keyevent(3))               # Chú thích: Nhấn phím HOME để quay về màn hình chính.
-    commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây.
+    commands.append(cmd_wait(rand_wait(3)))                   # Chú thích: Chờ 3 giây.
     commands.append(cmd_tap(cfg.COORDS_ICON_SHELTER_HOME[0], cfg.COORDS_ICON_SHELTER_HOME[1])) # Chú thích: Nhấn vào icon Shelter để mở lại app.
-    commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây để app mở lại.
+    commands.append(cmd_wait(rand_wait(3)))                   # Chú thích: Chờ 3 giây để app mở lại.
 
     # --- BƯỚC 10-17: CLONE ỨNG DỤNG ---
     commands.append(cmd_tap(cfg.COORDS_3_DOTS_MENU[0], cfg.COORDS_3_DOTS_MENU[1])) # Chú thích: Nhấn vào menu 3 chấm ở góc trên bên phải.
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây để menu xổ xuống.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây để menu xổ xuống.
 
     commands.append(cmd_tap(cfg.COORDS_SHOW_ALL_APPS[0], cfg.COORDS_SHOW_ALL_APPS[1])) # Chú thích: Nhấn vào mục "Show All Apps" để hiển thị tất cả ứng dụng.
-    commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây để danh sách ứng dụng tải.
+    commands.append(cmd_wait(rand_wait(3)))                   # Chú thích: Chờ 3 giây để danh sách ứng dụng tải.
 
     commands.append(cmd_tap(cfg.COORDS_CONTINUE[0], cfg.COORDS_CONTINUE[1])) # Chú thích: Nhấn "CONTINUE" nếu có hộp thoại thông báo.
-    commands.append(cmd_wait(5))                   # Chú thích: Chờ 5 giây để vào danh sách ứng dụng hệ thống.
+    commands.append(cmd_wait(rand_wait(5, 1)))                   # Chú thích: Chờ 5 giây để vào danh sách ứng dụng hệ thống.
 
     commands.append(cmd_tap(cfg.COORDS_SEARCH_ICON[0], cfg.COORDS_SEARCH_ICON[1])) # Chú thích: Nhấn vào biểu tượng kính lúp để tìm kiếm.
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây để bàn phím hiện ra.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây để bàn phím hiện ra.
 
     commands.append(cmd_type_text('google play'))  # Chú thích: Gõ từ khóa "google play" vào ô tìm kiếm.
-    commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây để kết quả tìm kiếm hiển thị.
+    commands.append(cmd_wait(rand_wait(3)))                   # Chú thích: Chờ 3 giây để kết quả tìm kiếm hiển thị.
 
     commands.append(cmd_tap(cfg.COORDS_GOOGLE_PLAY_STORE_ITEM[0], cfg.COORDS_GOOGLE_PLAY_STORE_ITEM[1])) # Chú thích: Nhấn vào ứng dụng "Google Play Store" trong kết quả.
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_tap(cfg.COORDS_CLONE_TO_SHELTER[0], cfg.COORDS_CLONE_TO_SHELTER[1])) # Chú thích: Nhấn vào nút "Clone to Shelter" để nhân bản ứng dụng.
-    commands.append(cmd_wait(3))                  # Chú thích: Chờ 3 giây để quá trình nhân bản hoàn tất.
+    commands.append(cmd_wait(rand_wait(3)))                  # Chú thích: Chờ 3 giây để quá trình nhân bản hoàn tất.
 
     commands.append(cmd_tap(cfg.COORDS_GOOGLE_PLAY_SERVICES_ITEM[0], cfg.COORDS_GOOGLE_PLAY_SERVICES_ITEM[1])) # Chú thích: Nhấn vào ứng dụng "Google Play services".
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_tap(cfg.COORDS_CLONE_TO_SHELTER[0], cfg.COORDS_CLONE_TO_SHELTER[1])) # Chú thích: Nhấn "Clone to Shelter" để nhân bản dịch vụ Google Play.
-    commands.append(cmd_wait(3))                  # Chú thích: Chờ 3 giây để quá trình nhân bản hoàn tất.
+    commands.append(cmd_wait(rand_wait(3)))                  # Chú thích: Chờ 3 giây để quá trình nhân bản hoàn tất.
 
     # --- BƯỚC 18-31: TẠO TÀI KHOẢN GOOGLE ---
     commands.append(cmd_keyevent(3))               # Chú thích: Nhấn phím HOME để quay về màn hình chính.
-    commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây.
+    commands.append(cmd_wait(rand_wait(3)))                   # Chú thích: Chờ 3 giây.
 
     commands.append(cmd_tap(cfg.COORDS_PLAY_STORE_ICON_HOME[0], cfg.COORDS_PLAY_STORE_ICON_HOME[1])) # Chú thích: Nhấn vào biểu tượng Play Store đã được nhân bản (có cặp sách).
-    commands.append(cmd_wait(5))                  # Chú thích: Chờ 5 giây để Play Store khởi động.
+    commands.append(cmd_wait(rand_wait(5, 1)))                  # Chú thích: Chờ 5 giây để Play Store khởi động.
 
     commands.append(cmd_tap(cfg.COORDS_SIGN_IN[0], cfg.COORDS_SIGN_IN[1])) # Chú thích: Nhấn vào nút "Sign in".
-    commands.append(cmd_wait(7))                   # Chú thích: Chờ 7 giây để màn hình đăng nhập tải.
+    commands.append(cmd_wait(rand_wait(7, 1)))                   # Chú thích: Chờ 7 giây để màn hình đăng nhập tải.
 
     commands.append(cmd_tap(cfg.COORDS_CREATE_ACCOUNT[0], cfg.COORDS_CREATE_ACCOUNT[1])) # Chú thích: Nhấn vào nút "Create account" để bắt đầu tạo tài khoản.
-    commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây.
+    commands.append(cmd_wait(rand_wait(3)))                   # Chú thích: Chờ 3 giây.
 
     commands.append(cmd_tap(cfg.COORDS_FOR_MY_PERSONAL_USE[0], cfg.COORDS_FOR_MY_PERSONAL_USE[1])) # Chú thích: Nhấn vào tùy chọn "For my personal use".
-    commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây.
+    commands.append(cmd_wait(rand_wait(3)))                   # Chú thích: Chờ 3 giây.
 
     commands.append(cmd_tap(cfg.COORDS_FIRST_NAME_INPUT[0], cfg.COORDS_FIRST_NAME_INPUT[1])) # Chú thích: Nhấn vào ô nhập "First name".
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_type_text(cfg.INPUT_FIRST_NAME)) # Chú thích: Gõ Tên vào ô.
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_tap(cfg.COORDS_TAP_AFTER_FIRST_NAME[0], cfg.COORDS_TAP_AFTER_FIRST_NAME[1])) # Chú thích: Nhấn vào vị trí bất kỳ sau khi nhập First name.
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_tap(cfg.COORDS_SURNAME_INPUT[0], cfg.COORDS_SURNAME_INPUT[1])) # Chú thích: Nhấn vào ô nhập "Surname".
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_type_text(cfg.INPUT_SURNAME)) # Chú thích: Gõ Họ vào ô.
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_tap(cfg.COORDS_NEXT_AFTER_NAME[0], cfg.COORDS_NEXT_AFTER_NAME[1])) # Chú thích: Nhấn "Next" sau khi đã nhập tên.
-    commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây để chuyển sang màn hình nhập ngày sinh.
+    commands.append(cmd_wait(rand_wait(3)))                   # Chú thích: Chờ 3 giây để chuyển sang màn hình nhập ngày sinh.
 
     commands.append(cmd_tap(cfg.COORDS_DAY_INPUT[0], cfg.COORDS_DAY_INPUT[1])) # Chú thích: Nhấn vào ô nhập "Day" (Ngày).
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_type_text(cfg.INPUT_DAY_OF_BIRTH)) # Chú thích: Gõ ngày sinh.
     commands.append(cmd_tap(cfg.COORDS_MONTH_DROPDOWN[0], cfg.COORDS_MONTH_DROPDOWN[1])) # Chú thích: Nhấn vào ô chọn "Month" (Tháng).
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_tap(cfg.COORDS_MONTH_FEBRUARY[0], cfg.COORDS_MONTH_FEBRUARY[1])) # Chú thích: Chọn tháng Hai trong danh sách.
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_tap(cfg.COORDS_YEAR_INPUT[0], cfg.COORDS_YEAR_INPUT[1])) # Chú thích: Nhấn vào ô nhập "Year" (Năm).
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_type_text(cfg.INPUT_YEAR_OF_BIRTH)) # Chú thích: Gõ năm sinh.
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_tap(cfg.COORDS_GENDER_DROPDOWN[0], cfg.COORDS_GENDER_DROPDOWN[1])) # Chú thích: Nhấn vào ô chọn "Gender" (Giới tính).
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_tap(cfg.COORDS_GENDER_MALE_OR_FEMALE[0], cfg.COORDS_GENDER_MALE_OR_FEMALE[1])) # Chú thích: Chọn một giới tính trong danh sách.
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_tap(cfg.COORDS_NEXT_AFTER_DOB[0], cfg.COORDS_NEXT_AFTER_DOB[1])) # Chú thích: Nhấn "Next" sau khi nhập xong ngày sinh.
-    commands.append(cmd_wait(5))                   # Chú thích: Chờ 5 giây để chuyển màn hình.
+    commands.append(cmd_wait(rand_wait(5, 1)))                   # Chú thích: Chờ 5 giây để chuyển màn hình.
 
     commands.append(cmd_tap(cfg.COORDS_CREATE_OWN_GMAIL[0], cfg.COORDS_CREATE_OWN_GMAIL[1])) # Chú thích: Nhấn vào tùy chọn "Create your own Gmail address".
-    commands.append(cmd_wait(3))                   # Chú thích: Chờ 3 giây.
+    commands.append(cmd_wait(rand_wait(3)))                   # Chú thích: Chờ 3 giây.
 
     commands.append(cmd_type_text(cfg.INPUT_GMAIL_USERNAME)) # Chú thích: Gõ tên người dùng Gmail mong muốn.
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_tap(cfg.COORDS_TAP_AFTER_GMAIL[0], cfg.COORDS_TAP_AFTER_GMAIL[1])) # Chú thích: Nhấn vào vị trí bất kỳ sau khi nhập Gmail.
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_tap(cfg.COORDS_NEXT_AFTER_GMAIL[0], cfg.COORDS_NEXT_AFTER_GMAIL[1])) # Chú thích: Nhấn "Next" sau khi nhập Gmail.
-    commands.append(cmd_wait(5))                   # Chú thích: Chờ 5 giây.
+    commands.append(cmd_wait(rand_wait(5, 1)))                   # Chú thích: Chờ 5 giây.
 
     commands.append(cmd_tap(cfg.COORDS_PASSWORD_INPUT[0], cfg.COORDS_PASSWORD_INPUT[1])) # Chú thích: Nhấn vào ô nhập "Password".
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_type_text(cfg.INPUT_PASSWORD)) # Chú thích: Gõ mật khẩu.
-    commands.append(cmd_wait(2))                   # Chú thích: Chờ 2 giây.
+    commands.append(cmd_wait(rand_wait(2)))                   # Chú thích: Chờ 2 giây.
 
     commands.append(cmd_tap(cfg.COORDS_NEXT_AFTER_PASSWORD[0], cfg.COORDS_NEXT_AFTER_PASSWORD[1])) # Chú thích: Nhấn "Next" sau khi nhập mật khẩu.
-    commands.append(cmd_wait(5))                   # Chú thích: Chờ 5 giây.
+    commands.append(cmd_wait(rand_wait(5, 1)))                   # Chú thích: Chờ 5 giây.
 
     commands.append(cmd_tap(cfg.COORDS_SKIP_OR_NEXT_FINAL[0], cfg.COORDS_SKIP_OR_NEXT_FINAL[1])) # Chú thích: Nhấn "Next" hoặc "Skip" ở các bước cuối cùng.
     
     # --- HIỂN THỊ THÔNG TIN TÀI KHOẢN TRÊN CONSOLE ---
     display_credentials_command = (
         f"echo '========== TAI KHOAN DA TAO =========='; "
-        f"echo 'Gmail: {cfg.INPUT_GMAIL_USERNAME}'; "
+        f"echo 'Gmail: {cfg.INPUT_GMAIL_USERNAME}@gmail.com'; "
         f"echo 'Mat khau: {cfg.INPUT_PASSWORD}'; "
         f"echo '======================================='"
     )
