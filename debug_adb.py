@@ -115,20 +115,20 @@ def generate_script():
     cfg.INPUT_DAY_OF_BIRTH = str(random.randint(1, 28))
     cfg.INPUT_YEAR_OF_BIRTH = str(random.randint(1990, 2004))
     
-    # --- TẠO USERNAME THÔNG MINH VÀ DUY NHẤT HƠN ---
+   # --- TẠO USERNAME HỢP LỆ VÀ DUY NHẤT ---
     first_name_lower = cfg.INPUT_FIRST_NAME.lower()
     surname_lower = cfg.INPUT_SURNAME.lower()
     year_short = cfg.INPUT_YEAR_OF_BIRTH[2:]
     
     # Tăng số lượng chữ số ngẫu nhiên lên 5 để đảm bảo tính duy nhất cao hơn
-    random_numbers = ''.join(random.choices(string.digits, k=5)) # <<<< ĐÃ TĂNG LÊN 5 SỐ
+    random_numbers = ''.join(random.choices(string.digits, k=5))
 
-    # Cập nhật TẤT CẢ các cấu trúc để đều chứa một phần số ngẫu nhiên
+    # Cập nhật lại các cấu trúc, loại bỏ dấu '_' không hợp lệ
     username_patterns = [
-        f"{first_name_lower}{surname_lower}{random_numbers}",         # Ví dụ: quan_dang12345
-        f"{surname_lower}.{first_name_lower}{random_numbers}",       # Ví dụ: dang.quan12345
-        f"{first_name_lower}_{year_short}{random_numbers}",          # Ví dụ: quan_0012345
-        f"{surname_lower}{first_name_lower}{random_numbers}"        # Ví dụ: dangquan12345
+        f"{first_name_lower}{surname_lower}{random_numbers}",         # Ví dụ: trangvo12345
+        f"{surname_lower}.{first_name_lower}{random_numbers}",       # Ví dụ: vo.trang12345
+        f"{first_name_lower}.{year_short}{random_numbers}",          # SỬA LỖI: Đã thay thế dấu '_' bằng dấu '.'
+        f"{surname_lower}{first_name_lower}{random_numbers}"        # Ví dụ: votrang12345
     ]
 
     # Chọn ngẫu nhiên một cấu trúc từ danh sách trên
