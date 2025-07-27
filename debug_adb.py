@@ -30,6 +30,11 @@ class Config:
     COORDS_ICON_SHELTER_HOME = (274, 294)         # Chú thích: Tọa độ của biểu tượng ứng dụng Shelter trên màn hình chính.
     COORDS_NEXT_BUTTON = (578, 1222)              # Chú thích: Tọa độ chung cho các nút "Next" hoặc "Continue" trong quá trình cài đặt Shelter.
     COORDS_ACCEPT_CONTINUE = (528, 1204)          # Chú thích: Tọa độ của nút "Accept and continue" để đồng ý điều khoản của Shelter.
+
+    # --- (BIẾN MỚI) TÁCH RIÊNG NÚT NEXT SAU KHI CÀI ĐẶT PROFILE ---
+    # !!! BẠN HÃY CẬP NHẬT LẠI TỌA ĐỘ NÀY CHO CHÍNH XÁC !!!
+    COORDS_NEXT_AFTER_SETUP = (578, 1222)         # Chú thích: Tọa độ của nút "Next" xuất hiện sau khi Shelter đã thiết lập xong.
+
     COORDS_ALLOW = (368, 706)                     # Chú thích: Tọa độ của nút "ALLOW" để cấp quyền quản trị thiết bị cho Shelter.
     COORDS_3_DOTS_MENU = (674, 98)                # Chú thích: Tọa độ của menu 3 chấm trong ứng dụng Shelter.
     COORDS_SHOW_ALL_APPS = (646, 488)             # Chú thích: Tọa độ của mục "Show All Apps" trong menu của Shelter.
@@ -205,7 +210,7 @@ def generate_script():
     commands.append(cmd_tap(cfg.COORDS_ACCEPT_CONTINUE[0], cfg.COORDS_ACCEPT_CONTINUE[1])) # Chú thích: Nhấn vào nút "Accept and continue" để đồng ý với điều khoản.
     commands.append(cmd_wait(rand_wait(17, 3)))                  # Chú thích: Chờ 17 giây để Shelter thiết lập môi trường làm việc.
 
-    commands.append(cmd_tap(cfg.COORDS_NEXT_BUTTON[0], cfg.COORDS_NEXT_BUTTON[1])) # Chú thích: Nhấn nút "Next" sau khi thiết lập xong.
+    commands.append(cmd_tap(cfg.COORDS_NEXT_AFTER_SETUP[0], cfg.COORDS_NEXT_AFTER_SETUP[1])) # Chú thích: Nhấn nút "Next" sau khi thiết lập xong.
     commands.append(cmd_wait(rand_wait(10, 2)))                  # Chú thích: Chờ 10 giây để màn hình yêu cầu quyền xuất hiện.
 
     commands.append(cmd_tap(cfg.COORDS_ALLOW[0], cfg.COORDS_ALLOW[1])) # Chú thích: Nhấn "ALLOW" để cấp quyền quản trị thiết bị cho Shelter.
