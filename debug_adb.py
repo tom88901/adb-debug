@@ -115,7 +115,7 @@ def generate_script():
     cfg.INPUT_DAY_OF_BIRTH = str(random.randint(1, 28))
     cfg.INPUT_YEAR_OF_BIRTH = str(random.randint(1990, 2004))
     
-    # --- (GIẢI PHÁP 1 - CẬP NHẬT) TẠO USERNAME THÔNG MINH VÀ DUY NHẤT HƠN ---
+    # --- TẠO USERNAME THÔNG MINH VÀ DUY NHẤT HƠN ---
     first_name_lower = cfg.INPUT_FIRST_NAME.lower()
     surname_lower = cfg.INPUT_SURNAME.lower()
     year_short = cfg.INPUT_YEAR_OF_BIRTH[2:]
@@ -134,7 +134,7 @@ def generate_script():
     # Chọn ngẫu nhiên một cấu trúc từ danh sách trên
     cfg.INPUT_GMAIL_USERNAME = random.choice(username_patterns)
     
-    # --- (GIẢI PHÁP 2) TẠO MẬT KHẨU "GIỐNG NGƯỜI" HƠN ---
+    # --- TẠO MẬT KHẨU "GIỐNG NGƯỜI" HƠN ---
     words = ["xanh", "do", "tim", "vang", "buon", "vui", "nho", "yeu", "mua", "nang", "sky", "sun", "moon", "happy"]
     random_word1 = random.choice(words)
     random_word2 = random.choice(words)
@@ -152,7 +152,7 @@ def generate_script():
     print(f"Mat khau: {cfg.INPUT_PASSWORD}", file=sys.stderr)
     print("------------------------------------------", file=sys.stderr)
 
-    # --- (GIẢI PHÁP 3) SỬ DỤNG THỜI GIAN CHỜ NGẪU NHIÊN ---
+    # --- SỬ DỤNG THỜI GIAN CHỜ NGẪU NHIÊN ---
     def rand_wait(base, variance=0.5):
         # Hàm trợ giúp để tạo thời gian chờ ngẫu nhiên
         # Ví dụ: rand_wait(3) sẽ cho ra số ngẫu nhiên từ 2.5 đến 3.5
@@ -203,7 +203,7 @@ def generate_script():
         commands.append(cmd_wait(rand_wait(2)))               # Chú thích: Chờ 2 giây giữa mỗi lần nhấn.
 
     commands.append(cmd_tap(cfg.COORDS_ACCEPT_CONTINUE[0], cfg.COORDS_ACCEPT_CONTINUE[1])) # Chú thích: Nhấn vào nút "Accept and continue" để đồng ý với điều khoản.
-    commands.append(cmd_wait(rand_wait(18, 3)))                  # Chú thích: Chờ 18 giây để Shelter thiết lập môi trường làm việc.
+    commands.append(cmd_wait(rand_wait(17, 3)))                  # Chú thích: Chờ 17 giây để Shelter thiết lập môi trường làm việc.
 
     commands.append(cmd_tap(cfg.COORDS_NEXT_BUTTON[0], cfg.COORDS_NEXT_BUTTON[1])) # Chú thích: Nhấn nút "Next" sau khi thiết lập xong.
     commands.append(cmd_wait(rand_wait(10, 2)))                  # Chú thích: Chờ 10 giây để màn hình yêu cầu quyền xuất hiện.
