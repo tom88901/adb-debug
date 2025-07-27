@@ -31,9 +31,8 @@ class Config:
     COORDS_NEXT_BUTTON = (578, 1222)              # Chú thích: Tọa độ chung cho các nút "Next" hoặc "Continue" trong quá trình cài đặt Shelter.
     COORDS_ACCEPT_CONTINUE = (528, 1204)          # Chú thích: Tọa độ của nút "Accept and continue" để đồng ý điều khoản của Shelter.
 
-    # --- (BIẾN MỚI) TÁCH RIÊNG NÚT NEXT SAU KHI CÀI ĐẶT PROFILE ---
-    # !!! BẠN HÃY CẬP NHẬT LẠI TỌA ĐỘ NÀY CHO CHÍNH XÁC !!!
-    COORDS_NEXT_AFTER_SETUP = (578, 1222)         # Chú thích: Tọa độ của nút "Next" xuất hiện sau khi Shelter đã thiết lập xong.
+    # --- TÁCH RIÊNG NÚT NEXT SAU KHI CÀI ĐẶT PROFILE ---
+    COORDS_NEXT_AFTER_SETUP = (588, 1202)         # Chú thích: Tọa độ của nút "Next" xuất hiện sau khi Shelter đã thiết lập xong.
 
     COORDS_ALLOW = (368, 706)                     # Chú thích: Tọa độ của nút "ALLOW" để cấp quyền quản trị thiết bị cho Shelter.
     COORDS_3_DOTS_MENU = (674, 98)                # Chú thích: Tọa độ của menu 3 chấm trong ứng dụng Shelter.
