@@ -115,17 +115,23 @@ def generate_script():
     cfg.INPUT_DAY_OF_BIRTH = str(random.randint(1, 28))
     cfg.INPUT_YEAR_OF_BIRTH = str(random.randint(1990, 2004))
     
-    # --- (GIẢI PHÁP 1) TẠO USERNAME THÔNG MINH HƠN ---
+    # --- (GIẢI PHÁP 1 - CẬP NHẬT) TẠO USERNAME THÔNG MINH VÀ DUY NHẤT HƠN ---
     first_name_lower = cfg.INPUT_FIRST_NAME.lower()
     surname_lower = cfg.INPUT_SURNAME.lower()
     year_short = cfg.INPUT_YEAR_OF_BIRTH[2:]
-    random_numbers = ''.join(random.choices(string.digits, k=4))
+    
+    # Tăng số lượng chữ số ngẫu nhiên lên 5 để đảm bảo tính duy nhất cao hơn
+    random_numbers = ''.join(random.choices(string.digits, k=5)) # <<<< ĐÃ TĂNG LÊN 5 SỐ
+
+    # Cập nhật TẤT CẢ các cấu trúc để đều chứa một phần số ngẫu nhiên
     username_patterns = [
-        f"{first_name_lower}{surname_lower}{year_short}",
-        f"{surname_lower}.{first_name_lower}{random_numbers}",
-        f"{first_name_lower}_{cfg.INPUT_YEAR_OF_BIRTH}",
-        f"{surname_lower}{first_name_lower}_{random_numbers}"
+        f"{first_name_lower}{surname_lower}{random_numbers}",         # Ví dụ: quan_dang12345
+        f"{surname_lower}.{first_name_lower}{random_numbers}",       # Ví dụ: dang.quan12345
+        f"{first_name_lower}_{year_short}{random_numbers}",          # Ví dụ: quan_0012345
+        f"{surname_lower}{first_name_lower}{random_numbers}"        # Ví dụ: dangquan12345
     ]
+
+    # Chọn ngẫu nhiên một cấu trúc từ danh sách trên
     cfg.INPUT_GMAIL_USERNAME = random.choice(username_patterns)
     
     # --- (GIẢI PHÁP 2) TẠO MẬT KHẨU "GIỐNG NGƯỜI" HƠN ---
