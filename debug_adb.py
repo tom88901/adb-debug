@@ -210,7 +210,7 @@ def generate_script():
     commands.append(cmd_wait(rand_wait(17, 3)))                  # Chú thích: Chờ 17 giây để Shelter thiết lập môi trường làm việc.
 
     commands.append(cmd_double_tap(cfg.COORDS_NEXT_AFTER_SETUP[0], cfg.COORDS_NEXT_AFTER_SETUP[1])) # Chú thích: Nhấn đúp vào nút "Next" sau khi thiết lập xong.
-    commands.append(cmd_wait(rand_wait(8, 2)))                  # Chú thích: Chờ 10 giây để màn hình yêu cầu quyền xuất hiện.
+    commands.append(cmd_wait(rand_wait(8, 2)))                  # Chú thích: Chờ 8 giây để màn hình yêu cầu quyền xuất hiện.
 
     commands.append(cmd_tap(cfg.COORDS_ALLOW[0], cfg.COORDS_ALLOW[1])) # Chú thích: Nhấn "ALLOW" để cấp quyền quản trị thiết bị cho Shelter.
     commands.append(cmd_wait(rand_wait(5, 1)))                   # Chú thích: Chờ 5 giây để vào màn hình chính của Shelter.
