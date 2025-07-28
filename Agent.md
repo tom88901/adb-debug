@@ -14,8 +14,3 @@ sh /sdcard/Download/auto_script.sh
 Lần này, kịch bản sẽ chạy được vì nội dung tệp đã hoàn toàn đúng định dạng shell.
 
 
-
-
-chmod +x /sdcard/Download/universal_shelter_script.sh
-
-sh /sdcard/Download/universal_shelter_script.sh
