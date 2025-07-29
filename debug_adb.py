@@ -212,7 +212,7 @@ def generate_script():
         commands.append(cmd_wait(rand_wait(2)))               # Chú thích: Chờ 2 giây giữa mỗi lần nhấn.
 
     commands.append(cmd_tap(cfg.COORDS_ACCEPT_CONTINUE[0], cfg.COORDS_ACCEPT_CONTINUE[1])) # Chú thích: Nhấn vào nút "Accept and continue" để đồng ý với điều khoản.
-    commands.append(cmd_wait(rand_wait(17, 3)))                  # Chú thích: Chờ 17 giây để Shelter thiết lập môi trường làm việc.
+    commands.append(cmd_wait(rand_wait(20, 3)))                  # Chú thích: Chờ 20 giây để Shelter thiết lập môi trường làm việc.
 
     # --- (ĐÃ CẬP NHẬT) SỬ DỤNG LỆNH NHẤN ĐÚP ---
     commands.append(cmd_double_tap(cfg.COORDS_NEXT_AFTER_SETUP[0], cfg.COORDS_NEXT_AFTER_SETUP[1])) # Chú thích: Nhấn đúp vào nút "Next" sau khi thiết lập xong.
